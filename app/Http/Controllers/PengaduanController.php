@@ -83,8 +83,6 @@ class PengaduanController extends Controller
      */
     public function update(Request $request, $id)
     {
-
-
         $status->update($data);
         return redirect('admin/pengaduans');
     }

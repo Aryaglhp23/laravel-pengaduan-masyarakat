@@ -20,13 +20,10 @@ class PetugasController extends Controller
      */
     public function index()
     {
-        if( Auth::user()->roles != 'ADMIN')
-        {
-
-        Alert::warning('Peringatan', 'Maaf Anda tidak punya akses');
-        return back();
+        if( Auth::user()->roles != 'ADMIN') {
+            Alert::warning('Peringatan', 'Maaf Anda tidak punya akses');
+            return back();
         }
-
         $data = DB::table('users')->where('roles','=', 'PETUGAS')->orWhere('roles', '=', 'ADMIN')->get();
         return view('pages.admin.petugas.index',[
             'data' => $data
@@ -49,29 +46,24 @@ class PetugasController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, User $user)
     {
         $request->validate([
-        'nik' => 'required|string|max:16|unique:users',
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'phone' => 'required|string|max:15',
-        'password' => 'required|string|confirmed|min:8',
-
+            'nik' => 'required|string|max:16|unique:users',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'required|string|max:15',
+            'password' => 'required|string|confirmed|min:8',
         ]);
-
         $user = $request->all();
-
         $user = User::create([
-        'nik' => $request->nik,
-        'name' => $request->name,
-        'email' => $request->email,
-        'phone' => $request->phone,
-        'roles' => $request->roles,
-        'password' => Hash::make($request->password),
-
+            'nik' => $request->nik,
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'roles' => $request->roles,
+            'password' => Hash::make($request->password),
         ]);
-
         Alert::success('Berhasil', 'Petugas baru ditambahkan');
         return redirect('admin/petugas');
     }
@@ -84,7 +76,7 @@ class PetugasController extends Controller
      */
     public function show($id)
     {
-        //
+
     }
 
     /**
@@ -95,7 +87,7 @@ class PetugasController extends Controller
      */
     public function edit($id)
     {
-        //
+        return view('pages.admin.petugas.edit');
     }
 
     /**
@@ -107,7 +99,7 @@ class PetugasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
     }
 
     /**
@@ -118,6 +110,9 @@ class PetugasController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::find($id);
+        $user->delete();
+        Alert::success('Berhasil', 'Petugas/Admin telah di hapus');
+        return redirect('admin/petugas');
     }
 }
